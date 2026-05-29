@@ -1,9 +1,0 @@
-.theos/
-*.dylib
-*.swp
-.DS_Store
-*.ipa
-work/
-Payload/
-*.md
-*.pdf
