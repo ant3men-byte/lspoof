@@ -42,12 +42,23 @@ jobs:
       - name: Prepare dylib
         run: |
           mkdir -p output
-          DYLIB=$(find .theos -type f -name "LocationSpoofer.dylib" | head -n 1)
-          echo "Found: $DYLIB"
-          cp "$DYLIB" output/LocationSpoofer.dylib
-          ls -lh output/LocationSpoofer.dylib
+          DYLIB="$(find .theos -type f -name 'LocationSpoofer.dylib' | head -n 1)"
+          echo "Found dylib: $DYLIB"
+
+          if [ -z "$DYLIB" ]; then
+            echo "LocationSpoofer.dylib not found"
+            exit 1
+          fi
+
+          cp "$DYLIB" ./output/LocationSpoofer.dylib
+
+          echo "=== OUTPUT ==="
+          ls -lah ./output
+          file ./output/LocationSpoofer.dylib
 
       - name: Upload dylib
         uses: actions/upload-artifact@v4
         with:
-          name: LocationSpo
+          name: LocationSpoofer-dylib
+          path: ./output/LocationSpoofer.dylib
+          if-no-files-found: error
