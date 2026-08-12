@@ -22,6 +22,12 @@ jobs:
           git clone --recursive https://github.com/theos/theos.git "$THEOS"
           echo "THEOS=$THEOS" >> "$GITHUB_ENV"
 
+      - name: Install ldid
+        run: |
+          brew install ldid
+          which ldid
+          ldid -h || true
+
       - name: Verify Theos
         run: |
           echo "THEOS=$THEOS"
@@ -35,6 +41,7 @@ jobs:
 
       - name: Find dylib
         run: |
+          echo "=== dylib files ==="
           find . -type f -name "*.dylib" -print
 
       - name: Upload dylib
