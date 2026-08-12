@@ -39,15 +39,15 @@ jobs:
           make clean
           make
 
-      - name: Find dylib
+      - name: Prepare dylib
         run: |
-          echo "=== dylib files ==="
-          find . -type f -name "*.dylib" -print
+          mkdir -p output
+          DYLIB=$(find .theos -type f -name "LocationSpoofer.dylib" | head -n 1)
+          echo "Found: $DYLIB"
+          cp "$DYLIB" output/LocationSpoofer.dylib
+          ls -lh output/LocationSpoofer.dylib
 
       - name: Upload dylib
         uses: actions/upload-artifact@v4
         with:
-          name: LSpoof-dylib
-          path: |
-            .theos/**/*.dylib
-          if-no-files-found: error
+          name: LocationSpo
