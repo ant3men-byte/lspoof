@@ -1,0 +1,38 @@
+name: Build LSpoof dylib
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Show Xcode version
+        run: |
+          xcodebuild -version
+          xcrun --sdk iphoneos --show-sdk-path
+
+      - name: Build LSpoof
+        run: |
+          make
+
+      - name: Find build output
+        run: |
+          echo "=== Build outputs ==="
+          find . -type f \( -name "*.dylib" -o -name "*.deb" \) -print
+
+      - name: Upload build files
+        uses: actions/upload-artifact@v4
+        with:
+          name: LSpoof-build
+          path: |
+            **/*.dylib
+            **/*.deb
+          if-no-files-found: error
