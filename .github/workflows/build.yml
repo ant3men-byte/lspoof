@@ -10,29 +10,37 @@ jobs:
   build:
     runs-on: macos-latest
 
+    env:
+      THEOS: ${{ github.workspace }}/theos
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Show Xcode version
+      - name: Install Theos
         run: |
-          xcodebuild -version
-          xcrun --sdk iphoneos --show-sdk-path
+          git clone --recursive https://github.com/theos/theos.git "$THEOS"
+          echo "THEOS=$THEOS" >> "$GITHUB_ENV"
+
+      - name: Verify Theos
+        run: |
+          echo "THEOS=$THEOS"
+          ls "$THEOS/makefiles/common.mk"
+          ls "$THEOS/makefiles/library.mk"
 
       - name: Build LSpoof
         run: |
+          make clean
           make
 
-      - name: Find build output
+      - name: Find dylib
         run: |
-          echo "=== Build outputs ==="
-          find . -type f \( -name "*.dylib" -o -name "*.deb" \) -print
+          find . -type f -name "*.dylib" -print
 
-      - name: Upload build files
+      - name: Upload dylib
         uses: actions/upload-artifact@v4
         with:
-          name: LSpoof-build
+          name: LSpoof-dylib
           path: |
-            **/*.dylib
-            **/*.deb
+            .theos/**/*.dylib
           if-no-files-found: error
